@@ -1,0 +1,5 @@
+git status
+git add .
+git status -> 빨간놈이 초록이 된다.
+git commit -m "메세지" 
+git push --set-upstream origin master -> 끝끝
