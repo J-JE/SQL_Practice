@@ -4,7 +4,7 @@
 --테이블을 사용하는 것과 동일하게 사용할수있다.
 --매번 자주 사용하는 쿼리문을 정의 해 두고 싶을때 뷰를 생성
 --VIEW 를 한번 만들어두고 마치 테이블처럼 사용한다고 생각!
---CREATE [OR REPLACE] VIEW 뷰이름 AS 서브쿼리 
+--CREATE [OR REPLACE] VIEW 뷰이름 AS 서브쿼리
 
 --[OR REPLACE]: 뷰 생성시 기존에 중복된 뷰가 있다면 해당뷰를 변경하고 기존에 중복된 뷰가 없다면 새로 뷰를 생성
 GRANT CREATE VIEW TO EMPLOYEE;--시스템 계정에서 권한 부여하고 시작
