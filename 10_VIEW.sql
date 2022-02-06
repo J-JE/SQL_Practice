@@ -36,7 +36,7 @@ SELECT * FROM USER_VIEWS; -- VIEW 정보 확인 딕셔너리
 
 SELECT * FROM V_RESULT_EMP
 WHERE EMP_ID ='205';
---베이스 테이블의 정보가 변경되면 VIEW도 같이 변견된 데이터를 반영한다.
+--베이스 테이블의 정보가 변경되면 VIEW도 같이 변경된 데이터를 반영한다.
 UPDATE EMPLOYEE
 SET EMP_NAME = '정중앙'
 WHERE EMP_ID ='205';
@@ -162,7 +162,7 @@ UPDATE EMP_SAL --SQL 오류: ORA-01733: virtual column not allowed here
 SET 연봉 = 8000000
 WHERE EMP_ID = '200';
 
-UPDATE EMP_SAL --산술 연산과 무관한 연산은 가능하다.
+UPDATE EMP_SAL --산술 연산과 무관한 업데이트는 가능하다.
 SET EMP_NAME = '정중하'
 WHERE EMP_ID =200;
 
