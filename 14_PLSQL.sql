@@ -413,7 +413,7 @@ BEGIN
     FOR K IN (SELECT EMP_ID, EMP_NAME FROM EMPLOYEE) LOOP
         EMP_ID_TABLE(I) := K.EMP_ID;
         EMP_NAME_TABLE(I) := K.EMP_NAME;
-        
+--        DBMS_OUTPUT.PUT_LINE('EMP_ID : ' || EMP_ID_TABLE(I) ||' EMP_NAME : '|| EMP_NAME_TABLE(I));
         I:= I+1;
     END LOOP;
         
@@ -515,7 +515,7 @@ EXCEPTION
 END;
 /
 
---정의 되지 않ㅇ는 예외
+--정의 되지 않은 예외
 UPDATE EMPLOYEE
 SET EMP_ID = 201
 WHERE EMP_ID = 200;
