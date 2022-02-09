@@ -99,23 +99,161 @@ WITH READ ONLY;
 --최근 3년동안의 수강인원이 가장 많은 과목의 3년동안의 누적학생수 3위 까지
 --최근 3년동안 수강인원이 가장 많은 과목 3위까지 중  의 전체 누적학생수 3위까지
 
-SELECT DISTINCT TERM_NO FROM TB_GRADE ORDER BY 1 DESC;
+--수정 전----수정 전----수정 전----수정 전----수정 전----수정 전----수정 전--
 
-
-SELECT B.CLASS_NO "과목번호", B.CLASS_NAME "과목이름", COUNT(*) "누적수강생수(명)"
-FROM TB_GRADE A
-JOIN TB_CLASS B ON A.CLASS_NO=B.CLASS_NO
-WHERE TO_DATE(SUBSTR(TERM_NO,1,4),'YYYY') BETWEEN '2007' AND '2009'
-GROUP BY B.CLASS_NO, B.CLASS_NAME
-ORDER BY 3 DESC;
-
-SELECT TO_CHAR(TO_DATE(SUBSTR(TERM_NO,1,4),'YYYY'),'') FROM TB_GRADE;
-
-
+SELECT DISTINCT SUBSTR(TERM_NO,1,4) FROM TB_GRADE ORDER BY 1 DESC;
+--최근 3년
 
 SELECT B.CLASS_NO "과목번호", B.CLASS_NAME "과목이름", COUNT(*) "누적수강생수(명)"
 FROM TB_GRADE A
 JOIN TB_CLASS B ON A.CLASS_NO=B.CLASS_NO
+WHERE SUBSTR(TERM_NO,1,4) BETWEEN '2007' AND '2009'
 GROUP BY B.CLASS_NO, B.CLASS_NAME
-HAVING SUBSTR(TERM_NO,1,4) BETWEEN '2007' AND '2009'
 ORDER BY 3 DESC;
+--과목별 최근 3년의 누적 수강생수
+
+SELECT *
+FROM (
+    SELECT A.CLASS_NO "과목번호", B.CLASS_NAME "과목이름", COUNT(*) "누적수강생수(명)"
+    FROM TB_GRADE A
+    JOIN TB_CLASS B ON A.CLASS_NO=B.CLASS_NO
+    WHERE SUBSTR(A.TERM_NO,1,4) BETWEEN '2007' AND '2009'
+    GROUP BY A.CLASS_NO, B.CLASS_NAME
+    ORDER BY 3 DESC)
+WHERE ROWNUM <=3;
+--과목별 최근 3년의 누적 수강생수 3위까지
+
+SELECT A.CLASS_NO "과목번호", B.CLASS_NAME "과목이름", COUNT(*) "누적수강생수(명)"
+FROM TB_GRADE A
+JOIN TB_CLASS B ON A.CLASS_NO=B.CLASS_NO
+WHERE A.CLASS_NO IN (
+    SELECT "과목번호"
+    FROM (
+        SELECT A.CLASS_NO "과목번호", B.CLASS_NAME "과목이름", COUNT(*) "누적수강생수(명)"
+        FROM TB_GRADE A
+        JOIN TB_CLASS B ON A.CLASS_NO=B.CLASS_NO
+        WHERE SUBSTR(A.TERM_NO,1,4) BETWEEN '2007' AND '2009'
+        GROUP BY A.CLASS_NO, B.CLASS_NAME
+        ORDER BY 3 DESC)
+    WHERE ROWNUM <=3)
+GROUP BY A.CLASS_NO, B.CLASS_NAME
+ORDER BY 3 DESC;
+--최근 3년동안 수강인원이 가장 많은 과목 3위까지의 전체 누적학생수
+
+--수정 전----수정 전----수정 전----수정 전----수정 전----수정 전----수정 전--
+
+SELECT *
+FROM (SELECT SUBSTR(TERM_NO,1,4)
+      FROM TB_GRADE
+      GROUP BY SUBSTR(TERM_NO,1,4)
+      ORDER BY 1 DESC) A
+WHERE ROWNUM <=3;
+--최근 3년
+
+SELECT B.CLASS_NO "과목번호", B.CLASS_NAME "과목이름",
+       COUNT(*) "누적수강생수(명)", DENSE_RANK() OVER(ORDER BY COUNT(A.STUDENT_NO) DESC) "순위"
+FROM TB_GRADE A
+JOIN TB_CLASS B ON A.CLASS_NO=B.CLASS_NO
+WHERE SUBSTR(TERM_NO,1,4) IN (SELECT *
+                              FROM (SELECT SUBSTR(TERM_NO,1,4)
+                                    FROM TB_GRADE
+                                    GROUP BY SUBSTR(TERM_NO,1,4)
+                                    ORDER BY 1 DESC) A
+                              WHERE ROWNUM <=3)
+GROUP BY B.CLASS_NO, B.CLASS_NAME
+ORDER BY 3 DESC;
+--과목별 최근 3년의 누적 수강생수
+
+SELECT *
+FROM (
+    SELECT B.CLASS_NO "과목번호", B.CLASS_NAME "과목이름",
+           COUNT(*) "누적수강생수(명)", DENSE_RANK() OVER(ORDER BY COUNT(A.STUDENT_NO) DESC) "순위"
+    FROM TB_GRADE A
+    JOIN TB_CLASS B ON A.CLASS_NO=B.CLASS_NO
+    WHERE SUBSTR(TERM_NO,1,4) IN (SELECT *
+                                  FROM (SELECT SUBSTR(TERM_NO,1,4)
+                                        FROM TB_GRADE
+                                        GROUP BY SUBSTR(TERM_NO,1,4)
+                                        ORDER BY 1 DESC) A
+                                  WHERE ROWNUM <=3)
+    GROUP BY B.CLASS_NO, B.CLASS_NAME
+    ORDER BY 3 DESC)
+WHERE 순위 <= 3;
+--과목별 최근 3년의 누적 수강생수 3위까지
+
+SELECT A.CLASS_NO "과목번호", B.CLASS_NAME "과목이름", COUNT(*) "누적수강생수(명)"
+FROM TB_GRADE A
+JOIN TB_CLASS B ON A.CLASS_NO=B.CLASS_NO
+WHERE A.CLASS_NO IN (
+    SELECT "과목번호"
+    FROM (
+    SELECT B.CLASS_NO "과목번호", B.CLASS_NAME "과목이름",
+           COUNT(*) "누적수강생수(명)", DENSE_RANK() OVER(ORDER BY COUNT(A.STUDENT_NO) DESC) "순위"
+    FROM TB_GRADE A
+    JOIN TB_CLASS B ON A.CLASS_NO=B.CLASS_NO
+    WHERE SUBSTR(TERM_NO,1,4) IN (SELECT *
+                                  FROM (SELECT SUBSTR(TERM_NO,1,4)
+                                        FROM TB_GRADE
+                                        GROUP BY SUBSTR(TERM_NO,1,4)
+                                        ORDER BY 1 DESC) A
+                                  WHERE ROWNUM <=3)
+    GROUP BY B.CLASS_NO, B.CLASS_NAME
+    ORDER BY 3 DESC)
+WHERE 순위 <= 3)
+GROUP BY A.CLASS_NO, B.CLASS_NAME
+ORDER BY 3 DESC;
+--최근 3년동안 수강인원이 가장 많은 과목 3위까지의 전체 누적학생수
+
+SELECT *
+FROM (
+    SELECT B.CLASS_NO "과목번호", B.CLASS_NAME "과목이름", COUNT(*) "누적수강생수(명)"
+    FROM TB_GRADE A
+    JOIN TB_CLASS B ON A.CLASS_NO=B.CLASS_NO
+    WHERE SUBSTR(A.TERM_NO,1,4) BETWEEN '2005' AND '2009'
+    GROUP BY B.CLASS_NO, B.CLASS_NAME
+    ORDER BY 3 DESC)
+WHERE ROWNUM <=3;
+--문제 예시와 같은 결과가 나오기 위해서는 2005~2009까지의 누적 수강생 수를 구해야 한다.
+
+
+--답----답----답----답----답----답----답----답----답----답----답----답--
+SELECT A.*
+FROM(
+    SELECT A.CLASS_NO, B.CLASS_NAME, COUNT(A.STUDENT_NO), DENSE_RANK() OVER( ORDER BY COUNT(A.STUDENT_NO) DESC) RANKCNT
+    FROM TB_GRADE A
+    LEFT JOIN TB_CLASS B ON A.CLASS_NO = B.CLASS_NO
+    WHERE SUBSTR(A.TERM_NO, 1, 4) IN (
+        SELECT SUBSTR(V.TERM_NO, 1, 4)
+        FROM(
+            SELECT SUBSTR(A.TERM_NO, 1, 4) TERM_NO
+            FROM TB_GRADE A
+            GROUP BY SUBSTR(A.TERM_NO, 1, 4)
+            ORDER BY 1 DESC ) V
+        WHERE ROWNUM <= 3 )
+    GROUP BY A.CLASS_NO, B.CLASS_NAME ) A
+WHERE RANKCNT <= 3;
+-----------------------------------------------------------------------------
+--최근 3년동안 수강인원이 가장 많은 과목 3위까지 중  의 전체 누적학생수 3위까지
+SELECT *
+FROM(
+    SELECT A.CLASS_NO, B.CLASS_NAME, COUNT(A.STUDENT_NO)
+    FROM TB_GRADE A
+    INNER JOIN (
+        SELECT A.*
+        FROM(
+            SELECT A.CLASS_NO, B.CLASS_NAME, COUNT(A.STUDENT_NO), DENSE_RANK() OVER( ORDER BY COUNT(A.STUDENT_NO) DESC) RANKCNT
+            FROM TB_GRADE A
+            LEFT JOIN TB_CLASS B ON A.CLASS_NO = B.CLASS_NO
+            WHERE SUBSTR(A.TERM_NO, 1, 4) IN (
+                SELECT SUBSTR(V.TERM_NO, 1, 4)
+                FROM(
+                    SELECT SUBSTR(A.TERM_NO, 1, 4) TERM_NO
+                    FROM TB_GRADE A
+                    GROUP BY SUBSTR(A.TERM_NO, 1, 4)
+                    ORDER BY 1 DESC ) V
+                WHERE ROWNUM <= 3 )
+        GROUP BY A.CLASS_NO, B.CLASS_NAME ) A
+    WHERE RANKCNT <= 3 ) B ON A.CLASS_NO = B.CLASS_NO
+GROUP BY A.CLASS_NO, B.CLASS_NAME
+ORDER BY 3 DESC ) A
+WHERE ROWNUM <= 3;

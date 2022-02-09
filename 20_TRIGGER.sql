@@ -89,6 +89,7 @@ INSERT INTO PRODUCT
 VALUES(SEQ_PCODE.NEXTVAL ,'갤럭시3', 'SS' ,900000, DEFAULT);
 
 SELECT * FROM PRODUCT; --재고0, 입고/출고가 일어나지 않은 상태
+SELECT * FROM PRO_DETAIL;
 
 -- 트리거 생성
 -- 행트리거 : 컬럼의 각각의 행의 데이터에 행변화가 생길때 마다 실행되며, 그데이터행의 실제값을 제어할수있다. 
@@ -107,14 +108,14 @@ BEGIN
     IF: NEW.STATUS = '입고'
     THEN
         UPDATE PRODUCT
-        SET STOCK = STOCK + : NEW.AMOUNT
+        SET STOCK = STOCK + :NEW.AMOUNT
         WHERE PCODE = :NEW.PCODE;
     END IF;
     
     IF: NEW.STATUS = '출고'
     THEN
         UPDATE PRODUCT
-        SET STOCK = STOCK - : NEW.AMOUNT
+        SET STOCK = STOCK - :NEW.AMOUNT
         WHERE PCODE = :NEW.PCODE;
     END IF;
 END;
@@ -140,6 +141,7 @@ BEGIN
     END IF;
 END;
 /
+--IF: NEW.STATUS, IF :NEW.STATUS -> :차이밖에 없음 :NEW를 붙여써야 하는듯
 
 INSERT INTO PRO_DETAIL VALUES( SEQ_DCODE.NEXTVAL, 1, SYSDATE, 5, '입고');
 INSERT INTO PRO_DETAIL VALUES( SEQ_DCODE.NEXTVAL, 1, SYSDATE, 2, '출고');
