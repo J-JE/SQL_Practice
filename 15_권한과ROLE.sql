@@ -30,7 +30,7 @@
 --            BACKUP ANY TABLE(테이블 백업)
 
 -- 시스템 관리자가 사용자에게 부여하는 권한
---            CREATE SESSION(데이터베이스에 접속)
+--            CREATE SESSION (데이터베이스에 접속)
 --            CREATE TABLE (테이블 생성)
 --            CREATE VIEW(뷰 생성)
 --            CREATE SEQUENCE(시퀀스 생성)
